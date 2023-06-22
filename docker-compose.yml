@@ -1,27 +1,25 @@
 version: '2.1'
 
+networks:
+  default:
+    name: ddev_default
+
 services:
-  jenkins:
-    image: 'jenkins/jenkins:lts'
+
+  jenkins2:
+    build:
+      context: './jenkins'
+      dockerfile: 'Dockerfile'
+    image: 'jenkins2'
     privileged: true
     user: jenkins
     ports:
       - '8080:8080'
       - '50000:50000'
-    container_name: 'jenkins'
+    container_name: 'jenkins2'
     volumes:
-      - './jenkins_configuration:/var/jenkins_home'
+      - './jenkins_configuration2:/var/jenkins_home'
       - '/var/run/docker.sock:/var/run/docker.sock'
-
-  agent:
-    image: 'jenkins/ssh-agent:jdk11'
-    privileged: true
-    user: root
-    container_name: 'agent'
-    expose:
-      - '22'
-    environment:
-      JENKINS_AGENT_SSH_PUBKEY: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC16zfEhrcOupYoBc6hvRNI9czfqKcaSeJRTddr1B0m74w78pAJ3WF6pjAQFpVcwGswETd8C/aNiSKq3YWlVNoUbNUBTqKay9yNWllRbPCFYUB96LNbMoibZbVOvb/4HnCS8EolvcMRYmId4BgQbmnr/nyeazaegkE7pVlyyieYFd+3TmCxlDiu4xehLAe6g1u0uofisPrbTEe1PPq81bQ5OF7EuyELqLQqmdZp7EyHAFwUcEPGKueCzmN036Wk+60VyN1SyIEMaYvvHEW3AyEmURsS1pK1QfItWECA44dFDzZMQ+ONOrOk2U48GzYyAA8FfMJo9W1H0W4vxqix6ZG27+GWYvPF4fYNkLLn1pYQkX61Ma/8g2sobulaNr2CVS1Q+66mWArUSQbOu1PIaQtbzVSwa3n1OzBaAX8rVDz6Pt/oo13IkelZNNiZuZYXqr3EJ17d5i2G6Nt9KRUWQJlLLAUbZ6KohLHbCnY/m00n6kLAnupx9+dGnfAW6vm7Q28= jenkins@e37e20bbcd4c
   
   mysql_db:
     image: 'percona:latest'
@@ -41,6 +39,9 @@ services:
       retries: 15
 
   mock:
+    build:
+      context: './mock'
+      dockerfile: 'mockerfile'
     image: 'vk_api'
     container_name: 'mock'
     ports:
