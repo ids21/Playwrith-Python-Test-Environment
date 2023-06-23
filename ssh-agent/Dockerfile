@@ -14,4 +14,5 @@ RUN apt-get update && \
    apt-get update && \
    apt-get -y --no-install-recommends install docker-ce && \
    apt-get clean && \
-   usermod -aG docker jenkins
+   usermod -aG docker jenkins && \
+   apt-get -y install python3.9 python3-pip
