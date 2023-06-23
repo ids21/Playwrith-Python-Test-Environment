@@ -1,9 +1,11 @@
-from playwright.sync_api import sync_playwright, Page
+from playwright.sync_api import Page
+from mysql.builder import MySQLBuilder
+from ui.login_page import LoginPage
+from utils.builder import Builder
 
-with sync_playwright() as p:
-    for browser_type in [p.chromium, p.firefox, p.webkit]:
-        browser = browser_type.launch()
-        page = browser.new_page()
-        page.goto('localhost:9999')
-        page.screenshot(path=f'example-{browser_type.name}.png')
-        browser.close()
+
+def test_login_with_valid_user(page: Page, login_page: LoginPage) -> None:
+    user = Builder.create_user()
+    login_page.load()
+    login_page.login(user.username, user.password)
+    assert login_page.invalid_error_message.inner_text() == "Invalid username or password"

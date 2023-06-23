@@ -7,7 +7,7 @@ from mysql.models import TestUser
 class MySQLClient:
 
     def __init__(self, user='root', password='admin',
-                 db_name='DB_MYAPP', host='0.0.0.0', port='3306'):
+                 db_name='DB_MYAPP', host='127.0.0.1', port='3306'):
 
         self.user = user
         self.password = password
