@@ -1,5 +1,4 @@
 from playwright.sync_api import Page
-from mysql.builder import MySQLBuilder
 from ui.login_page import LoginPage
 from utils.builder import Builder
 
