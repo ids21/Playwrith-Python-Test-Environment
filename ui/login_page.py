@@ -14,7 +14,7 @@ class LocatorNotFoundError(Exception):
 
 class LoginPage:
     
-    URL = "http://localhost:9999"
+    URL = "http://127.0.0.1:9999"
 
     def __init__(self, page: Page) -> None:
         self.page = page
