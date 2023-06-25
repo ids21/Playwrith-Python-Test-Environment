@@ -1,0 +1,38 @@
+version: '2.1'
+
+networks:
+  application_ddev_default:
+    external: true
+
+
+services:
+
+  jenkins:
+    image: 'jenkins'
+    privileged: true
+    user: jenkins
+    ports:
+      - '8080:8080'
+      - '50000:50000'
+    expose:
+      - '22'
+    container_name: 'jenkins'
+    volumes:
+      - './jenkins_configuration2:/var/jenkins_home'
+      - '/var/run/docker.sock:/var/run/docker.sock'
+    networks:
+      - application_ddev_default
+  
+
+  ssh-agent:
+    build:
+      context: './ssh-agent'
+      dockerfile: 'Dockerfile'
+    container_name: 'ssh-agent'
+    networks:
+      - application_ddev_default
+    expose:
+      - '22'
+    depends_on:   
+      - jenkins
+    

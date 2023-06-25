@@ -1,26 +1,11 @@
 version: '2.1'
 
 networks:
-  default:
-    name: ddev_default
+  ddev_default:
+    driver: bridge
 
 services:
 
-  jenkins2:
-    build:
-      context: './jenkins'
-      dockerfile: 'Dockerfile'
-    image: 'jenkins2'
-    privileged: true
-    user: jenkins
-    ports:
-      - '8080:8080'
-      - '50000:50000'
-    container_name: 'jenkins2'
-    volumes:
-      - './jenkins_configuration2:/var/jenkins_home'
-      - '/var/run/docker.sock:/var/run/docker.sock'
-  
   mysql_db:
     image: 'percona:latest'
     container_name: 'mysql_db'
@@ -32,7 +17,9 @@ services:
     ports:
       - '3306:3306'
     volumes:
-      - './mysql/myapp_db:/docker-entrypoint-initdb.d'
+      - '../mysql/myapp_db:/docker-entrypoint-initdb.d'
+    networks:
+      - ddev_default
     healthcheck:
       test: ['CMD', 'mysql', '-uroot', '-padmin', '-h0.0.0.0', '-P3306']
       timeout: 2s
@@ -40,10 +27,12 @@ services:
 
   mock:
     build:
-      context: './mock'
+      context: '../mock'
       dockerfile: 'mockerfile'
     image: 'vk_api'
     container_name: 'mock'
+    networks:
+      - ddev_default
     ports:
       - '9000:9000'
 
@@ -51,13 +40,15 @@ services:
     image: 'myapp'
     container_name: 'myapp'
     volumes:
-      - './:/project'
+      - '../:/project'
     ports:
       - '9999:9999'
     links:
       - 'mock:mock'
       - 'mysql_db:mysql_db'
-    command: ['/app/myapp', '--config=/project/myapp.conf']
+    command: ['/app/myapp', '--config=/project/application/myapp.conf']
+    networks:
+      - ddev_default
     depends_on:
       mysql_db:
         condition: service_healthy
